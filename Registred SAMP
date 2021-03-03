@@ -1,0 +1,77 @@
+#include <a_samp>
+
+#define DIALOG_LOGIN 1
+#define DIALOG_RECORD 2
+
+enum pInfo
+{
+	pID,
+	pName[MAX_PLAYER_NAME]
+};
+
+new Player[MAX_PLAYERS][pInfo];
+
+public OnPlayerRequestClass(playerid, classid)
+{
+	SetPlayerPos(playerid, 1958.3783, 1343.1572, 15.3746);
+	SetPlayerCameraPos(playerid, 1958.3783, 1343.1572, 15.3746);
+	SetPlayerCameraLookAt(playerid, 1958.3783, 1343.1572, 15.3746);
+	
+	new file[55];
+	GetPlayerName(playerid, Player[playerid][pName], 25);
+	format(file, 55, "GC/players/%s.ini", Player[playerid][pName]);
+	if(!DOF2::FileExists(file))
+        ShowPlayerDialog(playerid, DIALOG_RECORD, DIALOG_STYLE_INPUT, "» Registro:", "Bem - vindo(a) ao servidor\nDigite uma senha para você poder registra sua conta:", "Confirmar", "Cancelar");
+    else
+        ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, "» Logar:", "Bem - vindo(a) ao servidor\nDigite sua senha para você poder logar em sua conta:", "Confirmar", "Cancelar");
+	return 1;
+}
+
+public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+{
+	if(dialogid == DIALOG_LOGIN)
+	{
+	    if(!response)
+	        return Kick(playerid);
+	        
+	    GetPlayerName(playerid, Player[playerid][pName], 25);
+	    if(!strlen(inputtext))
+			return SCM(playerid, -1, ""TAG_ERRO" Você precisa digitar Sua Senha para Logar."), ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, "» Logar:", "Bem - vindo(a) ao servidor\nDigite sua senha para você poder logar em sua conta:", "Confirmar", "Cancelar");
+
+        new file[55];
+		format(file, 55, "GC/players/%s.ini", Player[playerid][pName]);
+		if(strcmp(inputtext, DOF2_GetString(file, "Senha"), false) == 0)
+		{
+		    SpawnPlayer(playerid);
+		}
+		else
+		{
+			SCM(playerid, -1, ""TAG_ERRO" Você digitou sua senha errada, Tente novamente.");
+			ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, "» Logar:", "Bem - vindo(a) ao servidor\nDigite sua senha para você poder logar em sua conta:", "Confirmar", "Cancelar");
+
+		}
+	}
+	if(dialogid == DIALOG_RECORD)
+	{
+	    if(!response)
+	        return Kick(playerid);
+	        
+	    new file[55];
+	    GetPlayerName(playerid, Player[playerid][pName], 25);
+	    if(strlen(inputtext) < 5)
+			return SCM(playerid, -1, ""TAG_ERRO" Sua senha precisa ter no máximo 5 caracteres."), ShowPlayerDialog(playerid, DIALOG_RECORD, DIALOG_STYLE_INPUT, "» Registro:", "Bem - vindo(a) ao servidor\nDigite uma senha para você poder registra sua conta:", "Confirmar", "Cancelar");
+
+		//Player[playerid][pID]++;
+		
+		format(file, 55, "GC/players/%s.ini", Player[playerid][pName]);
+	    DOF2::CreateFile(file);
+	    //DOF2::SetInt(file, "ID", Player[playerid][pID]);
+	    DOF2::SetString(file, "Nick", Player[playerid][pName]);
+	    DOF2::SetString(file, "Senha", inputtext);
+	    DOF2::SaveFile();
+	    
+	    SCM(playerid, -1, ""TAG_SERVER" Sua conta foi registrada com sucesso!");
+	    ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, "» Logar:", "Bem - vindo(a) ao servidor\nDigite sua senha para você poder logar em sua conta:", "Confirmar", "Cancelar");
+	}
+	return 1;
+}
