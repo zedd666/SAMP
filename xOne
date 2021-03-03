@@ -1,0 +1,51 @@
+enum pInfo
+{
+    pXOne
+};
+new rxd = 10;
+new Player[MAX_PLAYERS][pInfo];
+new bool:SearchX1[MAX_PLAYERS];
+ 
+CMD:procurarx1(playerid)
+{       
+    if(Player[playerid][pXOne])
+        return SendClientMessage(playerid, -1, "[SERVER]: Aguarde estamos procurando algum membro para ir x1 com você!");
+ 
+    SearchX1[playerid] = true;
+    Player[playerid][pXOne] = true;
+    
+    GameTextForPlayer(playerid,"~b~Procurando x1..",2000,1);
+    SendClientMessage(playerid, -1, "[SERVER]: Aguarde um pouco, estamos esperando um oponente!");
+    
+    for(new i; i < MAX_PLAYERS; i++)
+    {
+        if(SearchX1[i] && i != playerid)
+        {
+            SetPlayerInterior(i, 1);
+            SetPlayerInterior(playerid, 1);
+ 
+            SetPlayerPos(playerid, 1409.0616, -16.2067, 1000.9226);
+            SetPlayerFacingAngle(playerid, 90.0000);
+ 
+            SetPlayerPos(i, 1381.6859, -16.0738, 1000.9241);
+            SetPlayerFacingAngle(i, 270.0000);
+ 
+            SetPlayerArmour(i, 100);
+            SetPlayerArmour(playerid, 100);
+ 
+            SetPlayerHealth(i, 100);
+            SetPlayerHealth(playerid, 100);
+ 
+            SetPlayerVirtualWorld(i, rxd);
+            SetPlayerVirtualWorld(playerid, rxd);
+            rxd++;
+            
+            GameTextForPlayer(i, "~g~GO~y~GO~g~GO~b~!", 2500, 3);
+            GameTextForPlayer(playerid, "~g~GO~y~GO~g~GO~b~!", 2500, 3);
+        
+            SearchX1[i] = false;
+            SearchX1[playerid] = false;
+        }
+    }
+    return true;
+}
