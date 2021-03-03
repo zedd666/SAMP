@@ -1,0 +1,26 @@
+#include <a_samp>
+
+/*
+
+	Exemplo de uso:
+
+	format(str, sizeof(str), "%s Beta 12345", Name);
+	CreateLog(str, "OsBetas");
+
+	Caso de algum erro ao compilar mude os nomes das variáveis
+	file[] é str[]
+
+*/
+
+new File:file2, str[109], file[128];
+
+stock CreateLog(var[], text[])
+{
+    format(file, sizeof(file), "logs/%s.log", var);
+    file2 = fopen(file, open_io_append);
+    format(str, sizeof(str), "%s\r\n", text);
+    fwrite(file2, str);
+    fclose(file2);
+	printf(str);
+    return 1;
+}
